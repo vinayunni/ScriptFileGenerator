@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sql-formatter@12.2.4/dist/sql-formatter.min.js"></script>
+  </head>
+  <body>
+
+    <div id="mydiv"></div>
+
+    <script type="text/babel">              
+
+      function Hello() {
+        return (
+          <div>
+            <h1>Script File Generator</h1>
+            <h3><label>Name</label></h3>
+            <input id="name" />
+            <h3><label>Release</label></h3>
+            <input id="release" />
+            <h3><label>SQL Query</label></h3>
+            <textarea id="query" rows={10} cols={40} />
+            <br />
+            <br />
+            <button id="button" type="button" onClick={buttonClick}>
+              Generate
+            </button>                           
+          </div>        
+        );
+      }
+      
+      function buttonClick() {
+        const epochTime = (Math.floor(Date.now() / 1000)).toString();
+        const release = document.getElementById('release').value;
+        const name = document.getElementById('name').value;
+        const data = sqlFormatter.format(document.getElementById('query').value, {
+                            language: 'sql',
+                            keywordCase: 'upper',
+                            });
+
+        const a = document.createElement('a');
+        const blob = new Blob([data]);
+        a.href = URL.createObjectURL(blob);
+        let releaseSuffix = '.0.0';
+        if (release.includes('.'))
+        {
+            releaseSuffix = '.0';
+        }
+        a.download = epochTime+'_R'+release+releaseSuffix+'_'+name+'.sql';                     //filename to download
+        a.click(); 
+      }
+      const container = document.getElementById('mydiv');
+      const root = ReactDOM.createRoot(container);
+      root.render(<Hello />)       
+    </script>
+
+  </body>
+</html>
